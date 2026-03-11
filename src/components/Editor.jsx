@@ -1,13 +1,39 @@
-// src/components/Editor.jsx
+import { useEffect, useRef } from "react";
+import grapesjs from "grapesjs";
 
 const Editor = () => {
+    const editorRef = useRef(null);
+    const gjsEditor = useRef(null);
+
+    useEffect(() => {
+        if (!editorRef.current) return;
+
+        // Initialize GrapesJS and store the instance
+        gjsEditor.current = grapesjs.init({
+            container: editorRef.current,
+
+            height: "100%",
+            width: "100%",
+
+            storageManager: false,
+
+            fromElement: false,
+        });
+
+        // Cleanup function
+        return () => {
+            gjsEditor.current.destroy();
+            gjsEditor.current = null;
+        };
+
+    }, []);
+
     return (
-        <div style={{ width: '100%', height: '100%', background: '#1a1a2e' }}>
-            <p style={{ color: 'white', padding: '20px' }}>
-                GrapesJS Editor will mount here
-            </p>
-        </div>
+        <div
+            ref={editorRef}
+            style={{ width: "100%", height: "100%" }}
+        />
     );
-}
+};
 
 export default Editor;

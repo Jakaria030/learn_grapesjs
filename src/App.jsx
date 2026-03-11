@@ -1,14 +1,12 @@
-// src/App.jsx
-
-import Editor from './components/Editor'  // we'll create this next
+import Editor from "./components/Editor";
 
 const App = () => {
+
   return (
-    <div style={{ width: '100vw', height: '100vh' }}>
-      {/* Our GrapesJS editor will fill the full screen */}
+    <div style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
       <Editor />
     </div>
   );
-}
+};
 
 export default App;
