@@ -36,6 +36,115 @@ const Editor = () => {
             },
         });
 
+        // Text blocks
+        gjsEditor.current.BlockManager.add("text-block", {
+            label: "Text",
+            content: "<p>Type your text here...</p>",
+            category: "Basic",
+
+            media: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18.5 4v1.5H13v15h-2v-15H5.5V4h13z"/>
+            </svg>`,
+
+        });
+
+        // Image block
+        gjsEditor.current.BlockManager.add("image-block", {
+            label: "Image",
+            category: "Basic",
+            media: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 3H3v18h18V3zm-1 17H4V4h16v16zM6.5 14l3-4 2.5 3 2-2 3 4H6.5z"/>
+            </svg>`,
+            content: `<img src="https://picsum.photos/300/200" alt="image"/>`,
+        });
+
+        // Button block
+        gjsEditor.current.BlockManager.add("button-block", {
+            label: "Button",
+            category: "Basic",
+            media: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19 7H5a2 2 0 00-2 2v6a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2zm0 8H5V9h14v6z"/>
+            </svg>`,
+            content: `<a href="#" class="btn">Click Me</a>`,
+        });
+
+        // Alert block — uses our custom component!
+        gjsEditor.current.BlockManager.add("alert-block", {
+            label: "Alert",
+            category: "Basic",
+            media: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L1 21h22L12 2zm0 3.5L20.5 19h-17L12 5.5zM11 10v4h2v-4h-2zm0 6v2h2v-2h-2z"/>
+            </svg>`,
+
+            // Using our custom alert-box component type
+            content: { type: "alert-box" },
+
+        });
+
+        // Hero Section block
+        gjsEditor.current.BlockManager.add("hero-block", {
+            label: "Hero",
+            category: "Sections",
+            media: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 3h18v18H3V3zm16 16V5H5v14h14z"/>
+            </svg>`,
+
+            // content only contains HTML string
+            content: `
+            <section class="hero-section">
+                <h1 class="hero-title">Welcome</h1>
+                <p class="hero-text">Hero description here</p>
+            </section>
+            
+            <style>
+                .hero-section {
+                    background: #f8f9fa;
+                    padding: 60px 20px;
+                    text-align: center;
+                }
+                .hero-title {
+                    font-size: 48px;
+                    color: #333;
+                }
+                .hero-text {
+                    color: #666;
+                    margin-top: 16px;
+                }
+            </style>`,
+        });
+
+        // Two Column block
+        gjsEditor.current.BlockManager.add("two-column-block", {
+            label: "2 Columns",
+            category: "Sections",
+            media: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 3h8v18H3V3zm10 0h8v18h-8V3z"/>
+            </svg>`,
+
+            content: `
+            <div class="two-col">
+                <div class="col">Column 1</div>
+                <div class="col">Column 2</div>
+            </div>
+
+            <style>
+                .two-col {
+                    display: flex;
+                    gap: 20px;
+                    padding: 20px;
+                }
+                .col {
+                    flex: 1;
+                    padding: 20px;
+                    background: #f8f9fa;
+                    border: 1px dashed #ccc;
+                    min-height: 100px;
+                    text-align: center;
+                }
+            </style>`,
+        });
+
+
         // Add custom component
         gjsEditor.current.Components.addType("alert-box", {
             isComponent: (el) => {
