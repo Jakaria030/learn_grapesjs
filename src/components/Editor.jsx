@@ -36,6 +36,49 @@ const Editor = () => {
             },
         });
 
+        // Add custom component
+        gjsEditor.current.Components.addType("alert-box", {
+            isComponent: (el) => {
+                return (
+                    el.tagName === "DIV" && el.classList.contains("alert-box")
+                );
+            },
+
+            model: {
+                defaults: {
+                    tagName: "div",
+                    components: "This is an alert box",
+                    styles: `
+                    .alert-box {
+                        background: #fff3cd;
+                        border: 1px solid #ffc107;
+                        padding: 12px 16px;
+                        border-radius: 4px;
+                        color: #856404;
+                    }`,
+                    attributes: { class: "alert-box" },
+                    droppable: false,
+                },
+
+                init() {
+                    console.log("alert-box component created!", this);
+                },
+
+                updated(property, value, previous) {
+                    console.log("Property changed:", property);
+                    console.log("New value:", value);
+                    console.log("Old value:", previous);
+                }
+            },
+
+            view: {
+                onRender({ el }) {
+                    console.log("alert-box rendered!", el);
+
+                    el.innerHTML = "⚠️ " + el.innerHTML;
+                },
+            }
+        });
 
         // Inject reset CSS into canvas iframe
         gjsEditor.current.on("load", () => {
@@ -56,8 +99,7 @@ const Editor = () => {
             `;
 
             iframeDoc.head.appendChild(resetStyle);
-        })
-
+        });
 
         // Temporarily expose editor to window for console testing
         window.gjsEditor = gjsEditor.current;
