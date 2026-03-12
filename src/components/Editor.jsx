@@ -145,8 +145,79 @@ const Editor = () => {
         });
 
 
+        // Locked block
+        gjsEditor.current.BlockManager.add("locked-hero", {
+            label: "Locked Hero",
+            category: "Sections",
+            content: `
+            <section class="locked-hero">
+                <h1>This is a Locked Hero</h1>
+                <p>You cannot move or delete me!</p>
+            </section>
+
+            <style>
+            .locked-hero {
+                background: #e9ecef;
+                padding: 60px 20px;
+                text-align: center;
+            }
+            </style>
+        `,
+        });
+
+        gjsEditor.current.BlockManager.add("fixed-navbar", {
+            label: "Navbar",
+            category: "Sections",
+            content: {
+
+                // tagName of the root element
+                tagName: "nav",
+
+                // CSS classes
+                attributes: { class: "navbar" },
+
+                // behavior properties set directly
+                draggable: true,
+                removable: false,
+                copyable: false,
+                selectable: true,
+
+                // inner content
+                components: `
+                <div class="nav-brand">MyBrand</div>
+                <div class="nav-links">
+                    <a href="#">Home</a>
+                    <a href="#">About</a>
+                    <a href="#">Contact</a>
+                </div>`,
+
+                // styles
+                styles: `
+                .navbar {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 16px 32px;
+                    background: #333;
+                    color: white;
+                }
+                .nav-brand {
+                    font-size: 20px;
+                    font-weight: bold;
+                    color: white;
+                }
+                .nav-links a {
+                    color: white;
+                    text-decoration: none;
+                    margin-left: 24px;
+                }`,
+
+            },
+        });
+
         // Add custom component
         gjsEditor.current.Components.addType("alert-box", {
+            extend: 'text',
             isComponent: (el) => {
                 return (
                     el.tagName === "DIV" && el.classList.contains("alert-box")
