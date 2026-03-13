@@ -281,6 +281,71 @@ const Editor = () => {
             iframeDoc.head.appendChild(resetStyle);
         });
 
+        // Add a custom sector to Style Manager
+        gjsEditor.current.StyleManager.addSector("custom-animations", {
+            name: "Animation",
+            open: false,
+            properties: [
+                {
+                    id: "transition",
+                    label: "Transition",
+                    type: "text",
+                    defaults: "all 0.3s ease",
+                },
+                {
+                    id: "transorfm",
+                    label: "Transform",
+                    type: "text",
+                    defaults: "none",
+                },
+                {
+                    id: "opacity",
+                    label: "Opacity",
+                    type: "slider",
+                    defaults: 1,
+                    min: 0,
+                    max: 1,
+                    step: 0.1,
+                }
+            ]
+        });
+
+        // Add custom property type
+        gjsEditor.current.StyleManager.addSector("custom-effects", {
+            name: "Effects",
+            open: false,
+            properties: [
+                {
+                    id: "mix-blend-mode",
+                    label: "Blend Mode",
+                    type: "select",
+                    defaults: "normal",
+                    options: [
+                        { id: "normal", label: "Normal" },
+                        { id: "multiply", label: "Multiply" },
+                        { id: "screen", label: "Overlay" },
+                        { id: "darken", label: "Darken" },
+                        { id: "lighten", label: "Lighten" },
+                    ],
+                },
+                {
+                    id: "box-shadow-color",
+                    label: "Shadow Color",
+                    type: "color",
+                    defaults: "transparent",
+                },
+                {
+                    id: "z-index",
+                    label: "Z-Index",
+                    type: "number",
+                    defaults: 0,
+                    min: 0,
+                    max: 999,
+                    step: 1,
+                },
+            ]
+        })
+
         // Temporarily expose editor to window for console testing
         window.gjsEditor = gjsEditor.current;
 
