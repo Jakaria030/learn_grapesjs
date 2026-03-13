@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { lazy, useEffect, useRef } from "react";
 import grapesjs from "grapesjs";
 
 const Editor = () => {
@@ -218,6 +218,7 @@ const Editor = () => {
         // Add custom component
         gjsEditor.current.Components.addType("alert-box", {
             extend: 'text',
+
             isComponent: (el) => {
                 return (
                     el.tagName === "DIV" && el.classList.contains("alert-box")
@@ -238,10 +239,70 @@ const Editor = () => {
                     }`,
                     attributes: { class: "alert-box" },
                     droppable: false,
+
+                    traits: [
+                        {
+                            type: "text",
+                            name: "alert-message",
+                            label: "Message",
+                            placeholder: "Enter alert message..",
+                        },
+                        {
+                            type: "select",
+                            name: "alert-type",
+                            label: "Alert Type",
+                            options: [
+                                { id: "warning", label: "Warning" },
+                                { id: "success", label: "Success" },
+                                { id: "error", label: "Error" },
+                                { id: "info", label: "Info" },
+                            ],
+                        },
+                        {
+                            type: "checkbox",
+                            name: "dismissible",
+                            label: "Dismissible",
+                            valueTrue: "true",
+                            valueFalse: "false",
+                        }
+                    ]
                 },
 
                 init() {
                     console.log("alert-box component created!", this);
+
+                    this.on("change:attributes", this.handleTraitChange);
+                },
+
+                handleTraitChange() {
+
+                    // Get current trait values
+                    const alertType = this.getAttributes()["alert-type"];
+                    const message = this.getAttributes()["alert-message"];
+
+                    // Change background color based on alert type
+                    const colors = {
+                        warning: { bg: "#fff3cd", border: "#ffc107", color: "#856404" },
+                        success: { bg: "#d4edda", border: "#28a745", color: "#155724" },
+                        error: { bg: "#f8d7da", border: "#dc3545", color: "#721c24" },
+                        info: { bg: "#d1ecf1", border: "#17a2b8", color: "#0c5460" },
+                    };
+                    const style = colors[alertType] || colors.warning;
+
+                    // Update component styles
+                    this.setStyle({
+                        background: style.bg,
+                        border: `1px solid ${style.border}`,
+                        color: style.color,
+                        padding: "12px 16px",
+                        "border-radius": "4px",
+                    });
+
+                    // Update message if provided
+                    if (message) {
+                        this.components(`⚠️ ${message}`);
+                    }
+
                 },
 
                 updated(property, value, previous) {
@@ -259,6 +320,7 @@ const Editor = () => {
                 },
             }
         });
+
 
         // Inject reset CSS into canvas iframe
         gjsEditor.current.on("load", () => {
