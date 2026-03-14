@@ -5,6 +5,31 @@ const Editor = () => {
     const editorRef = useRef(null);
     const gjsEditor = useRef(null);
 
+    const handleExport = () => {
+        const html = gjsEditor.current.getHtml();
+        const css = gjsEditor.current.getCss();
+
+        const fullPage = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>My Page</title>
+            <style>${css}</style>
+        </head>
+        ${html}
+        </html>
+        `;
+
+        const blob = new Blob([fullPage], { type: "text/html" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "my-page.html";
+        link.click();
+        URL.revokeObjectURL(link.href);
+    };
+
     useEffect(() => {
         if (!editorRef.current) return;
 
@@ -420,10 +445,25 @@ const Editor = () => {
     }, []);
 
     return (
-        <div
-            ref={editorRef}
-            style={{ width: "100%", height: "100%" }}
-        />
+        <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
+
+            {/* Top bar with export button */}
+            <div style={{ background: "#333", padding: "8px 16px", display: "flex", gap: 8 }}>
+                <button
+                    onClick={handleExport}
+                    style={{ background: "#4361ee", color: "white", border: "none", padding: "6px 16px", borderRadius: 4, cursor: "pointer" }}
+                >
+                    Export HTML
+                </button>
+            </div>
+
+            {/* GrapesJS canvas */}
+            <div
+                ref={editorRef}
+                style={{ flex: 1 }}
+            />
+
+        </div>
     );
 };
 
