@@ -5,6 +5,13 @@ const Editor = () => {
     const editorRef = useRef(null);
     const gjsEditor = useRef(null);
 
+    const handleImport = () => {
+        const html = prompt("Paste your HTML here:");
+        if (!html) return;
+
+        gjsEditor.current.setComponents(html);
+    };
+
     const handleExport = () => {
         const html = gjsEditor.current.getHtml();
         const css = gjsEditor.current.getCss();
@@ -454,6 +461,13 @@ const Editor = () => {
                     style={{ background: "#4361ee", color: "white", border: "none", padding: "6px 16px", borderRadius: 4, cursor: "pointer" }}
                 >
                     Export HTML
+                </button>
+
+                <button
+                    onClick={handleImport}
+                    style={{ background: "#2ec4b6", color: "white", border: "none", padding: "6px 16px", borderRadius: 4, cursor: "pointer" }}
+                >
+                    Import HTML
                 </button>
             </div>
 
