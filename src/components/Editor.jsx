@@ -98,6 +98,37 @@ const Editor = () => {
             },
         });
 
+        // Add custom keyboard shortcut
+        gjsEditor.current.Keymaps.add(
+            "custom:clear-canvas",
+            "ctrl+shift+d",
+            "clear-canvas",
+        );
+
+        // Add shortut for export
+        gjsEditor.current.Keymaps.add(
+            "custom:export",
+            "ctrl+e",
+            (editor) => {
+                const html = editor.getHtml();
+                const css = editor.getCss();
+                console.log("Exported via shortuct");
+                console.log("HTML:", html);
+                console.log("CSS:", css);
+            }
+        );
+
+        // Remove default shortcut
+        gjsEditor.current.Keymaps.remove("core:undo");
+        gjsEditor.current.Keymaps.add(
+            "custom:undo",
+            "ctrl+z",
+            (editor) => {
+                editor.runCommand("core:undo");
+                console.log("Undo triggered!");
+            },
+        );
+
         // Add a custom command
         gjsEditor.current.Commands.add("clear-canvas", {
             run(editor) {
