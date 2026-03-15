@@ -37,6 +37,14 @@ const Editor = () => {
         URL.revokeObjectURL(link.href);
     };
 
+    const handleClear = () => {
+        const confirmed = window.confirm("Are you sure you want to clear the canvas?");
+
+        if (!confirmed) return;
+
+        gjsEditor.current.runCommand("clear-canvas");
+    };
+
     useEffect(() => {
         if (!editorRef.current) return;
 
@@ -89,6 +97,29 @@ const Editor = () => {
                 },
             },
         });
+
+        // Add a custom command
+        gjsEditor.current.Commands.add("clear-canvas", {
+            run(editor) {
+                editor.getWrapper().components().reset();
+                editor.setStyle("");
+                console.log("Canvas cleared!");
+            },
+        });
+
+        // Add a command that accepts options
+        gjsEditor.current.Commands.add("add-text", {
+            run(editor, sender, options) {
+                const text = options?.text || "Default Text";
+                const tag = options?.tag || "p";
+
+                editor.getWrapper().append(
+                    `<${tag}>${text}</${tag}>`
+                );
+
+                console.log(`Added ${tag}: ${text}`);
+            }
+        })
 
         gjsEditor.current.Components.addType("image", {
 
@@ -614,6 +645,13 @@ const Editor = () => {
                     style={{ background: "#2ec4b6", color: "white", border: "none", padding: "6px 16px", borderRadius: 4, cursor: "pointer" }}
                 >
                     Import HTML
+                </button>
+
+                <button
+                    onClick={handleClear}
+                    style={{ background: "#ef233c", color: "white", border: "none", padding: "6px 16px", borderRadius: 4, cursor: "pointer" }}
+                >
+                    Clear Canvas
                 </button>
             </div>
 
