@@ -1,9 +1,11 @@
-import { lazy, useEffect, useRef } from "react";
+import { lazy, useEffect, useRef, useState } from "react";
 import grapesjs from "grapesjs";
 
 const Editor = () => {
     const editorRef = useRef(null);
     const gjsEditor = useRef(null);
+
+    const [activeDevice, setActiveDevice] = useState("Desktop");
 
     const handleImport = () => {
         const html = prompt("Paste your HTML here:");
@@ -45,6 +47,11 @@ const Editor = () => {
         gjsEditor.current.runCommand("clear-canvas");
     };
 
+    const handleDeviceChange = (device) => {
+        gjsEditor.current.setDevice(device);
+        setActiveDevice(device);
+    };
+
     useEffect(() => {
         if (!editorRef.current) return;
 
@@ -71,6 +78,16 @@ const Editor = () => {
                         name: "Mobile",
                         width: "375px",
                         widthMedia: "480px",
+                    },
+                    {
+                        name: "4K",
+                        width: "2560px",
+                        widthMedia: "2560px",
+                    },
+                    {
+                        name: "Small Mobile",
+                        width: "320px",
+                        widthMedia: "320px",
                     },
                 ],
             },
@@ -684,6 +701,27 @@ const Editor = () => {
                 >
                     Clear Canvas
                 </button>
+
+                <div style={{ width: 1, height: 24, background: "#555" }} />
+
+                {
+                    ["Desktop", "Tablet", "Mobile"].map((device) => {
+                        return (<button
+                            key={device}
+                            onClick={() => handleDeviceChange(device)}
+                            style={{
+                                background: activeDevice === device ? "#4361ee" : "#555",
+                                color: "white",
+                                border: "none",
+                                padding: "6px 12px",
+                                borderRadius: 4,
+                                cursor: "pointer",
+                            }}
+                        >
+                            {device == "Desktop" ? "🖥️" : "📱"} {device}
+                        </button>)
+                    })
+                }
             </div>
 
             {/* GrapesJS canvas */}
