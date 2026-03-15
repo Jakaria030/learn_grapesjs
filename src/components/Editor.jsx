@@ -66,6 +66,28 @@ const Editor = () => {
                     },
                 ],
             },
+
+            assetManager: {
+                upload: true,
+                uploadFile: (e) => {
+                    console.log("E: ", e, "\n");
+
+                    console.log(e.target.files)
+
+                    const files = e.dataTransfer ? e.dataTransfer.files : e.target.files;
+                    console.log("Files: ", files, "\n");
+
+                    Array.from(files).forEach((file) => {
+                        const url = URL.createObjectURL(file);
+
+                        gjsEditor.current.AssetManager.add({
+                            type: "image",
+                            src: url,
+                            name: file.name,
+                        });
+                    });
+                },
+            },
         });
 
         // Text blocks
@@ -373,6 +395,31 @@ const Editor = () => {
             `;
 
             iframeDoc.head.appendChild(resetStyle);
+
+            // Add default assets
+            gjsEditor.current.AssetManager.add([
+                {
+                    type: "image",
+                    src: "https://picsum.photos/300/200?random=1",
+                    name: "Image 1",
+                    width: 300,
+                    height: 200,
+                },
+                {
+                    type: "image",
+                    src: "https://picsum.photos/300/200?random=2",
+                    name: "Image 2",
+                    width: 300,
+                    height: 200,
+                },
+                {
+                    type: "image",
+                    src: "https://picsum.photos/300/200?random=3",
+                    name: "Image 3",
+                    width: 300,
+                    height: 200,
+                },
+            ]);
         });
 
         // Add a custom sector to Style Manager
