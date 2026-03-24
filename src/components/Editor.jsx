@@ -16,6 +16,24 @@ const Editor = () => {
 
     const [activeDevice, setActiveDevice] = useState("Desktop");
 
+    const [canUndo, setCanUndo] = useState(false);
+    const [canRedo, setCanRedo] = useState(false);
+
+    const updateUndoRedoState = () => {
+        setCanUndo(gjsEditor.current.UndoManager.hasUndo());
+        setCanRedo(gjsEditor.current.UndoManager.hasRedo());
+    };
+
+    const handleUndo = () => {
+        gjsEditor.current.UndoManager.undo();
+        updateUndoRedoState();
+    };
+
+    const handleRedo = () => {
+        gjsEditor.current.UndoManager.redo();
+        updateUndoRedoState();
+    };
+
     const handleImport = () => {
         const html = prompt("Paste your HTML here:");
         if (!html) return;
@@ -184,6 +202,23 @@ const Editor = () => {
             ]);
         });
 
+        // Listen for canvas changes to update undo/redo state
+        gjsEditor.current.on("component:add", () => {
+            setTimeout(updateUndoRedoState, 100);
+        });
+
+        gjsEditor.current.on("component:remove", () => {
+            setTimeout(updateUndoRedoState, 100);
+        });
+
+        gjsEditor.current.on("component:update", () => {
+            setTimeout(updateUndoRedoState, 100);
+        });
+        
+        gjsEditor.current.on("component:change", () => {
+            setTimeout(updateUndoRedoState, 100);
+        });
+
         // Temporarily expose editor to window for console testing
         window.gjsEditor = gjsEditor.current;
 
@@ -200,6 +235,36 @@ const Editor = () => {
 
             {/* Top bar with export button */}
             <div style={{ background: "#333", padding: "8px 16px", display: "flex", gap: 8 }}>
+                <button
+                    onClick={handleUndo}
+                    disabled={!canUndo}
+                    style={{
+                        background: canUndo ? "#555" : "#2a2a2a",
+                        color: canUndo ? "white" : "#666",
+                        border: "none",
+                        padding: "6px 12px",
+                        borderRadius: 4,
+                        cursor: canUndo ? "pointer" : "not-allowed",
+                    }}
+                >
+                    ↩ Undo
+                </button>
+
+                <button
+                    onClick={handleRedo}
+                    disabled={!canRedo}
+                    style={{
+                        background: canRedo ? "#555" : "#2a2a2a",
+                        color: canRedo ? "white" : "#666",
+                        border: "none",
+                        padding: "6px 12px",
+                        borderRadius: 4,
+                        cursor: canRedo ? "pointer" : "not-allowed",
+                    }}
+                >
+                    ↪ Redo
+                </button>
+
                 <button
                     onClick={handleExport}
                     style={{ background: "#4361ee", color: "white", border: "none", padding: "6px 16px", borderRadius: 4, cursor: "pointer" }}
