@@ -8,7 +8,7 @@ import customComponentsPlugin from "../plugins/customComponentsPlugin";
 import mediaBlocksPlugin from "../plugins/mediaBlocksPlugin";
 import commandsPlugin from "../plugins/commandsPlugin";
 import stylePlugin from "../plugins/stylePlugin";
-
+import rtePlugin from "../plugins/rtePlugin";
 
 const Editor = () => {
     const editorRef = useRef(null);
@@ -73,7 +73,7 @@ const Editor = () => {
             fromElement: false,
 
             // add plugin
-            plugins: [basicBlocksPlugin, sectionBlocksPlugin, customComponentsPlugin, mediaBlocksPlugin, commandsPlugin, stylePlugin],
+            plugins: [basicBlocksPlugin, sectionBlocksPlugin, customComponentsPlugin, mediaBlocksPlugin, commandsPlugin, stylePlugin, rtePlugin],
 
             // plugin option empty for now
             pluginsOpts: {
@@ -83,6 +83,7 @@ const Editor = () => {
                 [mediaBlocksPlugin]: {},
                 [commandsPlugin]: {},
                 [stylePlugin]: {},
+                [rtePlugin]: {},
             },
 
             deviceManager: {
