@@ -49,6 +49,36 @@ const customComponentsPlugin = (editor, options) => {
                         valueTrue: "true",
                         valueFalse: "false",
                     }
+                ],
+
+                toolbar: [
+                    // keep default buttons
+                    {
+                        label: `<svg viewBox="0 0 24 24"><path fill="currentColor" d="M13,20H11V8L5.5,13.5L4.08,12.08L12,4.16L19.92,12.08L18.5,13.5L13,8V20Z"/></svg>`,
+                        command: "select-parent",
+                    },
+                    {
+                        label: `<svg viewBox="0 0 24 24"><path fill="currentColor" d="M13,6V11H18V13H13V18H11V13H6V11H11V6H13Z"/></svg>`,
+                        command: "tlb-move",
+                    },
+                    {
+                        label: `<svg viewBox="0 0 24 24"><path fill="currentColor" d="M19,5H16V1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"/></svg>`,
+                        command: "tlb-clone",
+                    },
+                    {
+                        label: `<svg viewBox="0 0 24 24"><path fill="currentColor" d="M8,21H16A2,2 0 0,0 18,19V7H6V19A2,2 0 0,0 8,21Z"/></svg>`,
+                        command: "tlb-delete",
+                    },
+                    // Custom button for alert-box only
+                    {
+                        label: "⚙️",
+                        command: (editor) => {
+                            const selected = editor.getSelected();
+                            const alertType = selected.getAttributes()["alert-type"];
+                            alert(`Current alert type: ${alertType || "warning"}`);
+                        },
+                        attributes: { title: "Alert Settings" },
+                    },
                 ]
             },
 
