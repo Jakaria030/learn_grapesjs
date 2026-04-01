@@ -13,6 +13,7 @@ import rtePlugin from "../plugins/rtePlugin";
 const Editor = () => {
     const editorRef = useRef(null);
     const gjsEditor = useRef(null);
+    const pageIdRef = useRef(null);
 
     const [activeDevice, setActiveDevice] = useState("Desktop");
 
@@ -78,6 +79,86 @@ const Editor = () => {
         gjsEditor.current.setDevice(device);
         setActiveDevice(device);
     };
+
+    const handleSave = async () => {
+        try {
+
+            // Get current project data from GrapesJS
+            const projectData = gjsEditor.current.getProjectData();
+
+            // Send to backend
+            const response = await fetch(`http://localhost:5000/api/pages/${pageIdRef.current}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: "Untitled Page",
+                    projectData: projectData,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert("Page saved successfully!");
+            }
+
+        } catch (error) {
+            console.error("Save error:", error);
+            alert("Save failed!");
+        }
+
+    };
+
+    const handleLoad = async () => {
+
+        try {
+
+            // Fetch page data from backend
+            const response = await fetch(`http://localhost:5000/api/pages/${pageIdRef.current}`);
+            const data = await response.json();
+
+            if (data.success) {
+
+                // Load project data into GrapesJS
+                gjsEditor.current.loadProjectData(data.data.projectData);
+                alert("Page loaded successfully!");
+
+            }
+
+        } catch (error) {
+            console.error("Load error:", error);
+            alert("Load failed!");
+        }
+
+    };
+
+    useEffect(() => {
+
+        const initPage = async () => {
+            const savedPageId = localStorage.getItem("current-page-id");
+
+            if (savedPageId) {
+                pageIdRef.current = savedPageId;
+                console.log("Existing page loaded:", savedPageId);
+            } else {
+                const response = await fetch("http://localhost:5000/api/pages", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        name: "Untitled Page",
+                        projectData: {},
+                    }),
+                });
+                const data = await response.json();
+                pageIdRef.current = data.data._id;
+                localStorage.setItem("current-page-id", pageIdRef.current);
+                console.log("New page created:", pageIdRef.current);
+            }
+        };
+
+        initPage();
+
+    }, []);
 
     useEffect(() => {
         if (!editorRef.current) return;
@@ -214,7 +295,7 @@ const Editor = () => {
         gjsEditor.current.on("component:update", () => {
             setTimeout(updateUndoRedoState, 100);
         });
-        
+
         gjsEditor.current.on("component:change", () => {
             setTimeout(updateUndoRedoState, 100);
         });
@@ -306,6 +387,22 @@ const Editor = () => {
                         </button>)
                     })
                 }
+
+                <div style={{ width: 1, height: 24, background: "#555" }} />
+
+                <button
+                    onClick={handleSave}
+                    style={{ background: "#2a9d8f", color: "white", border: "none", padding: "6px 16px", borderRadius: 4, cursor: "pointer" }}
+                >
+                    💾 Save
+                </button>
+
+                <button
+                    onClick={handleLoad}
+                    style={{ background: "#e9c46a", color: "#333", border: "none", padding: "6px 16px", borderRadius: 4, cursor: "pointer" }}
+                >
+                    📂 Load
+                </button>
             </div>
 
             {/* GrapesJS canvas */}
