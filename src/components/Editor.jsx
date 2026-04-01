@@ -9,8 +9,10 @@ import mediaBlocksPlugin from "../plugins/mediaBlocksPlugin";
 import commandsPlugin from "../plugins/commandsPlugin";
 import stylePlugin from "../plugins/stylePlugin";
 import rtePlugin from "../plugins/rtePlugin";
+import { useAuth } from "../context/AuthContext";
 
 const Editor = () => {
+    const { token, logout } = useAuth();
     const editorRef = useRef(null);
     const gjsEditor = useRef(null);
     const pageIdRef = useRef(null);
@@ -92,7 +94,10 @@ const Editor = () => {
             // Send to backend
             const response = await fetch(`http://localhost:5000/api/pages/${pageIdRef.current}`, {
                 method: "PUT",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
                 body: JSON.stringify({
                     name: "Untitled Page",
                     projectData: projectData,
@@ -117,7 +122,11 @@ const Editor = () => {
         try {
 
             // Fetch page data from backend
-            const response = await fetch(`http://localhost:5000/api/pages/${pageIdRef.current}`);
+            const response = await fetch(`http://localhost:5000/api/pages/${pageIdRef.current}`, {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
             const data = await response.json();
 
             if (data.success) {
@@ -191,7 +200,10 @@ const Editor = () => {
             } else {
                 const response = await fetch("http://localhost:5000/api/pages", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`,
+                    },
                     body: JSON.stringify({
                         name: "Untitled Page",
                         projectData: {},
@@ -493,6 +505,15 @@ const Editor = () => {
                 >
                     + Add Page
                 </button>
+
+                <div style={{ marginLeft: "auto" }}>
+                    <button
+                        onClick={logout}
+                        style={{ background: "#ef233c", color: "white", border: "none", padding: "6px 16px", borderRadius: 4, cursor: "pointer" }}
+                    >
+                        Logout
+                    </button>
+                </div>
 
             </div>
 
