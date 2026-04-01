@@ -20,6 +20,9 @@ const Editor = () => {
     const [canUndo, setCanUndo] = useState(false);
     const [canRedo, setCanRedo] = useState(false);
 
+    const [pages, setPages] = useState([]);
+    const [activePage, setActivePage] = useState(null);
+
     const updateUndoRedoState = () => {
         setCanUndo(gjsEditor.current.UndoManager.hasUndo());
         setCanRedo(gjsEditor.current.UndoManager.hasRedo());
@@ -121,6 +124,7 @@ const Editor = () => {
 
                 // Load project data into GrapesJS
                 gjsEditor.current.loadProjectData(data.data.projectData);
+                updatePageList();
                 alert("Page loaded successfully!");
 
             }
@@ -130,6 +134,50 @@ const Editor = () => {
             alert("Load failed!");
         }
 
+    };
+
+    const updatePageList = () => {
+        const allPage = gjsEditor.current.Pages.getAll().map(p => ({
+            id: p.getId(),
+            name: p.getName() || "Untitled Page"
+        }));
+
+        setPages(allPage);
+        setActivePage(gjsEditor.current.Pages.getSelected().getId());
+    };
+
+    const handleAddPage = () => {
+        const name = prompt("Enter page name: ");
+        if (!name) return;
+
+        const id = name.toLowerCase().replace(/ /g, "-");
+
+        gjsEditor.current.Pages.add({
+            id: id,
+            name: name,
+        });
+
+        updatePageList();
+    };
+
+    const handleSelectPage = (pageId) => {
+        gjsEditor.current.Pages.select(pageId);
+        setActivePage(pageId);
+    };
+
+    const handleRemovePage = (e, pageId) => {
+        e.stopPropagation();
+
+        if (pages.length === 1) {
+            alert("Cannot delete last page!");
+            return;
+        }
+
+        const confirmed = window.confirm("Delete this page?");
+        if (!confirmed) return;
+
+        gjsEditor.current.Pages.remove(pageId);
+        updatePageList();
     };
 
     useEffect(() => {
@@ -281,6 +329,9 @@ const Editor = () => {
                     height: 200,
                 },
             ]);
+
+            gjsEditor.current.Pages.getSelected().set("name", "Home");
+            updatePageList();
         });
 
         // Listen for canvas changes to update undo/redo state
@@ -403,6 +454,46 @@ const Editor = () => {
                 >
                     📂 Load
                 </button>
+            </div>
+
+            {/* Page Manager Bar */}
+            <div style={{ background: "#222", padding: "6px 16px", display: "flex", gap: 8, alignItems: "center", borderBottom: "1px solid #444" }}>
+
+                <span style={{ color: "#aaa", fontSize: 12 }}>Pages:</span>
+
+                {pages.map((page) => (
+                    <div
+                        key={page.id}
+                        onClick={() => handleSelectPage(page.id)}
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 4,
+                            background: activePage === page.id ? "#4361ee" : "#333",
+                            color: "white",
+                            padding: "4px 10px",
+                            borderRadius: 4,
+                            cursor: "pointer",
+                            fontSize: 12,
+                        }}
+                    >
+                        <span>{page.name}</span>
+                        <span
+                            onClick={(e) => handleRemovePage(e, page.id)}
+                            style={{ color: "#aaa", marginLeft: 4, fontSize: 10 }}
+                        >
+                            ✕
+                        </span>
+                    </div>
+                ))}
+
+                <button
+                    onClick={handleAddPage}
+                    style={{ background: "#555", color: "white", border: "none", padding: "4px 10px", borderRadius: 4, cursor: "pointer", fontSize: 12 }}
+                >
+                    + Add Page
+                </button>
+
             </div>
 
             {/* GrapesJS canvas */}
